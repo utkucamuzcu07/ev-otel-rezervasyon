@@ -194,3 +194,13 @@ Diyagramda SQL yoktur; yalnızca metot çağrıları gösterilmiştir (kılavuzd
 >>>>>>> ad7e84d462d336a21c1ffbbbbd25b15383095308
 =======
 >>>>>>> adbb5230d0e18fb901fe715d481f1c5e70130dd8
+**İlişkilerin Açıklaması:**
+
+Diyagramdaki oklar, sınıflar arasındaki ilişkileri gösterir. Bunlar:
+
+- **Uygular (`..|>`)**: `JsonReservationRepository` sınıfı, `ReservationRepositoryInterface` arayüzünü uygular. Yani "Ben bu arayüzün kurallarına uyarım" der.
+- **Kullanır (`-->`)**: `ReservationService`, `BookingConflictService` ve `PricingService` sınıflarını kullanır. Yani "İşimi yaparken bunlardan yardım alırım" der.
+- **Bağımlıdır (`..>`)**: `ReservationController`, `ReservationService`'e bağımlıdır. Yani "Ben onsuz çalışamam" der.
+- **İçerir (`*--`)**: `Reservation`, `ReservationNight` nesnelerini içerir. Yani "Gece kayıtları, rezervasyon olmadan var olamaz" der.
+
+**Önemli Kural:** Controller'dan Repository'ye doğrudan ok YOKTUR. Bu, katmanlı mimariye uyduğumuzu gösterir.
