@@ -178,3 +178,188 @@ classDiagram
 - **Strategy:** `PricingService`, fiyat kurallarını `PricingStrategyInterface` üzerinden çalıştırır. Yeni kural eklemek yeni bir sınıf eklemektir.
 - **Repository:** Servisler yalnızca `...RepositoryInterface` bilir. JSON (Aşama 2) ve PDO (Aşama 3) uygulamaları aynı arayüzü uygular.
 - **Çekirdek problem:** `AvailabilityService::isAvailable`, `findOverlapping` ile çakışmaları arar. Aynı gün çıkış-giriş çakışma sayılmaz.
+## 4. ER Diyagramı
+ 
+```mermaid
+erDiagram
+    USERS ||--o{ PROPERTIES : "sahip olur"
+    USERS ||--o{ RESERVATIONS : "yapar"
+    USERS ||--o{ REVIEWS : "yazar"
+    USERS ||--o{ FAVORITES : "ekler"
+    USERS ||--o{ NOTIFICATIONS : "alır"
+    USERS ||--o{ COMPLAINTS : "gönderir"
+    USERS ||--o{ PASSWORD_RESET_TOKENS : "talep eder"
+    USERS |o--o{ AUDIT_LOGS : "işlem yapar"
+ 
+    PROPERTIES ||--|{ BOOKABLE_UNITS : "içerir"
+    PROPERTIES ||--o{ PHOTOS : "sahiptir"
+    PROPERTIES ||--o{ PROPERTY_AMENITIES : "sunar"
+    AMENITIES ||--o{ PROPERTY_AMENITIES : "ilan listesinde yer alır"
+    PROPERTIES ||--o{ PRICING_RULES : "tanımlar"
+    PROPERTIES ||--o{ FAVORITES : "favorilenir"
+    PROPERTIES |o--o{ COMPLAINTS : "hakkında"
+ 
+    BOOKABLE_UNITS ||--o{ CALENDAR_ENTRIES : "istisna tanımlanır"
+    BOOKABLE_UNITS ||--o{ RESERVATIONS : "ayrılır"
+    BOOKABLE_UNITS ||--o{ RESERVATION_NIGHTS : "geceleri tutulur"
+ 
+    RESERVATIONS ||--o{ RESERVATION_NIGHTS : "engelleyen geceler"
+    RESERVATIONS ||--|{ RESERVATION_CHARGES : "kalemlere ayrılır"
+    RESERVATIONS ||--o{ PAYMENTS : "ödenir"
+    RESERVATIONS ||--o| REVIEWS : "yorumlanır"
+    RESERVATIONS |o--o{ COMPLAINTS : "hakkında"
+ 
+    USERS {
+        int id PK
+        string first_name
+        string last_name
+        string email UK
+        string password_hash
+        enum role "musteri, ilan_sahibi, yonetici"
+        enum status "aktif, kisitli"
+        datetime created_at
+    }
+    PROPERTIES {
+        int id PK
+        int owner_id FK
+        string name
+        enum type "otel, kiralik_ev"
+        text description
+        string address
+        string city
+        enum booking_mode "aninda, onayli"
+        enum cancellation_policy "esnek, orta, kati"
+        enum status "taslak, aktif, pasif, kaldirildi"
+    }
+    BOOKABLE_UNITS {
+        int id PK
+        int property_id FK
+        string name "UK (property_id, name)"
+        int capacity
+        decimal base_price "DECIMAL(10,2)"
+        enum status "aktif, pasif"
+    }
+    PHOTOS {
+        int id PK
+        int property_id FK
+        string url
+        int sort_order
+    }
+    AMENITIES {
+        int id PK
+        string name UK
+    }
+    PROPERTY_AMENITIES {
+        int property_id PK, FK
+        int amenity_id PK, FK
+    }
+    CALENDAR_ENTRIES {
+        int id PK
+        int unit_id FK "UK (unit_id, date)"
+        date date
+        enum status "acik, kapali"
+        decimal special_price "NULL olabilir"
+    }
+    RESERVATIONS {
+        int id PK "UK (id, unit_id)"
+        string reservation_no UK "RZ-YYYYMMDD-XXXXXX"
+        int customer_id FK
+        int unit_id FK
+        date check_in "CHECK check_out > check_in"
+        date check_out
+        int guest_count
+        enum status "Beklemede, Onaylandi, Iptal, Reddedildi, SuresiDoldu, Tamamlandi"
+        datetime expires_at
+        decimal total_price "DECIMAL(10,2)"
+        string idempotency_key UK
+        string cancel_reason
+        datetime created_at
+        datetime updated_at
+    }
+    RESERVATION_NIGHTS {
+        int reservation_id PK, FK
+        date night_date PK
+        int unit_id FK "UK (unit_id, night_date)"
+    }
+    RESERVATION_CHARGES {
+        int id PK
+        int reservation_id FK
+        enum type "konaklama, vergi, ek_ucret"
+        string description
+        decimal amount "DECIMAL(10,2)"
+    }
+    PRICING_RULES {
+        int id PK
+        int property_id FK
+        string name
+        enum type "vergi, ek_ucret"
+        enum calc_method "yuzde, gecelik_sabit, rezervasyon_basina_sabit"
+        decimal value "DECIMAL(10,2)"
+    }
+    PAYMENTS {
+        int id PK
+        int reservation_id FK
+        string provider_ref
+        decimal amount "DECIMAL(10,2)"
+        string currency
+        enum status "beklemede, basarili, basarisiz, iade_simule"
+    }
+    REVIEWS {
+        int id PK
+        int reservation_id FK, UK
+        int customer_id FK
+        tinyint rating "1-5"
+        text comment
+        enum moderation_status
+        datetime created_at
+    }
+    FAVORITES {
+        int user_id PK, FK
+        int property_id PK, FK
+        datetime added_at
+    }
+    NOTIFICATIONS {
+        int id PK
+        int user_id FK
+        string type
+        string message
+        boolean is_read
+        datetime created_at
+    }
+    COMPLAINTS {
+        int id PK
+        int sender_id FK
+        int property_id FK "NULL olabilir"
+        int reservation_id FK "NULL olabilir"
+        text description
+        enum status
+        text admin_note
+    }
+    AUDIT_LOGS {
+        int id PK
+        int actor_id FK "sistem islemlerinde NULL"
+        string entity_type
+        int entity_id
+        string action
+        string old_value
+        string new_value
+        string reason
+        datetime created_at
+    }
+    PASSWORD_RESET_TOKENS {
+        int id PK
+        int user_id FK
+        string token_hash UK
+        datetime expires_at
+        datetime used_at "NULL olabilir"
+    }
+```
+ 
+### Normalizasyon Gerekçesi
+ 
+Her varlık kendi tablosunda tutulmuş, tekrarlayan veriler (fotoğraf, olanak, gece, fiyat kalemi, favori) ara veya alt tablolara ayrılarak **1NF** sağlanmıştır. Bileşik anahtarlı tablolarda (`PROPERTY_AMENITIES`, `FAVORITES`, `RESERVATION_NIGHTS`) yalnızca anahtarın tamamına bağlı sütunlar bırakıldığı için **2NF** sağlanır. Müşteri, ilan veya şehir gibi bilgiler yalnızca bir tabloda tutulur ve diğer tablolar bunlara FK ile bağlanır; böylece anahtar olmayan sütunlar arasında geçişli bağımlılık kalmaz ve **3NF** sağlanır.
+ 
+**Bilinçli iki istisna:**
+ 
+1. `RESERVATION_NIGHTS.unit_id`: Kesin 3NF'ye göre fazlalıktır; ancak veritabanının `UNIQUE (unit_id, night_date)` kısıtını uygulayabilmesi için gereklidir. Bu kısıt çift rezervasyona karşı son savunmadır. Tutarsızlığı `(reservation_id, unit_id)` bileşik FK'si önler.
+2. `RESERVATIONS.total_price`: `RESERVATION_CHARGES` toplamından türetilebilir; ancak fiyat anlık görüntüsü olarak bilinçli saklanır (BR-16) ve testle kalemlerin toplamına eşitliği doğrulanır.
