@@ -467,9 +467,11 @@ sequenceDiagram
 
 6 risk tablosu
 [risk-listesi.xlsx](https://github.com/user-attachments/files/33447133/risk-listesi.xlsx)
+
+
 6. Arayüz
 6.1 Sayfa haritası
- '''mermaid
+```mermaid
  flowchart LR
 subgraph HER["Herkes (ziyaretçi dahil)"]
   A["Ana sayfa ve arama"] --> B["Arama sonuçları"]
@@ -523,7 +525,7 @@ style HER fill:#f7f9fc,stroke:#c3ccd8,color:#1b2430
 style MUS fill:#f4faf6,stroke:#b9dcc6,color:#12301f
 style ILN fill:#fffaf0,stroke:#ecd5a6,color:#3a2a08
 style YON fill:#fdf6f6,stroke:#e6c0c0,color:#3a1010
-'''
+```
 
 Renkler rolü gösterir: gri = herkes, yeşil = kayıtlı müşteri, turuncu = yalnızca ilan sahibi, kırmızı = yalnızca yönetici. Yetki sunucu tarafında da denetlenir (NFR-03).
 
