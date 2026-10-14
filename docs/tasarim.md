@@ -354,7 +354,14 @@ erDiagram
         datetime used_at "NULL olabilir"
     }
 ```
- 
+ **İlişkilerin Açıklaması:**
+
+- **Bir kullanıcı birden fazla rezervasyon yapabilir** (`USERS ||--o{ RESERVATIONS`).
+- **Bir ilan birden fazla birime (odaya) sahip olabilir** (`PROPERTIES ||--o{ BOOKABLE_UNITS`).
+- **Bir birim birden fazla kez rezerve edilebilir** (`BOOKABLE_UNITS ||--o{ RESERVATIONS`).
+- **Bir rezervasyon birden fazla geceyi kapsar** (`RESERVATIONS ||--|{ RESERVATION_NIGHTS`).
+
+Bu ilişkiler sayesinde hangi kullanıcı hangi odayı hangi tarihte tutmuş, hepsini takip edebiliyoruz.
 ### Normalizasyon Gerekçesi
  
 Her varlık kendi tablosunda tutulmuş, tekrarlayan veriler (fotoğraf, olanak, gece, fiyat kalemi, favori) ara veya alt tablolara ayrılarak **1NF** sağlanmıştır. Bileşik anahtarlı tablolarda (`PROPERTY_AMENITIES`, `FAVORITES`, `RESERVATION_NIGHTS`) yalnızca anahtarın tamamına bağlı sütunlar bırakıldığı için **2NF** sağlanır. Müşteri, ilan veya şehir gibi bilgiler yalnızca bir tabloda tutulur ve diğer tablolar bunlara FK ile bağlanır; böylece anahtar olmayan sütunlar arasında geçişli bağımlılık kalmaz ve **3NF** sağlanır.
