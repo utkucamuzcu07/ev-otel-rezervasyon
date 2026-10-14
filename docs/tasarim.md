@@ -363,3 +363,84 @@ Her varlık kendi tablosunda tutulmuş, tekrarlayan veriler (fotoğraf, olanak, 
  
 1. `RESERVATION_NIGHTS.unit_id`: Kesin 3NF'ye göre fazlalıktır; ancak veritabanının `UNIQUE (unit_id, night_date)` kısıtını uygulayabilmesi için gereklidir. Bu kısıt çift rezervasyona karşı son savunmadır. Tutarsızlığı `(reservation_id, unit_id)` bileşik FK'si önler.
 2. `RESERVATIONS.total_price`: `RESERVATION_CHARGES` toplamından türetilebilir; ancak fiyat anlık görüntüsü olarak bilinçli saklanır (BR-16) ve testle kalemlerin toplamına eşitliği doğrulanır.
+
+
+## 3. Sıralama Diyagramı: Rezervasyon Oluşturma (Çekirdek: Çift Rezervasyon Önleme)
+ 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant T as Tarayıcı
+    participant C as ReservationController
+    participant S as ReservationService
+    participant P as PricingService
+    participant B as BookingConflictService
+    participant R as ReservationRepository
+ 
+    T->>C: POST /rezervasyon (birimId, giriş, çıkış, kişi, idempotencyKey)
+    C->>S: create(userId, data)
+    S->>R: findByIdempotencyKey(key)
+ 
+    alt anahtar daha önce kullanılmış (çift gönderim, CS-06)
+        R-->>S: mevcut Reservation
+        S-->>C: mevcut Reservation
+        C-->>T: 302 mevcut rezervasyon sayfası (yeni kayıt yok)
+    else yeni istek
+        S->>S: tarih, kişi sayısı, ilan ve birim durumu doğrula (BR-01, BR-02, BR-03, BR-14)
+        alt doğrulama geçersiz
+            S-->>C: ValidationException
+            C-->>T: formu hata mesajıyla tekrar göster (kayıt yok)
+        else doğrulama geçerli
+            S->>P: calculate(birimId, giriş, çıkış)
+            P-->>S: gece, vergi ve ek ücret kalemleri
+            S->>R: beginTransaction()
+            S->>B: assertAvailable(birimId, giriş, çıkış, kişi)
+            B->>R: lockUnit(birimId)
+            alt kilit alınamadı (2 yeniden denemeden sonra)
+                R-->>B: LockTimeoutException
+                B-->>S: LockTimeoutException
+                S->>R: rollback()
+                S-->>C: BusyException
+                C-->>T: "Yoğunluk var, lütfen tekrar deneyin" (kayıt yok)
+            else kilit alındı
+                B->>R: expireStaleHolds(birimId)
+                Note over B,R: Süresi dolmuş Beklemede kayıtlar işlem içinde<br/>Süresi Doldu yapılır ve geceleri serbest kalır (CS-05)
+                B->>R: findOverlapping(birimId, giriş, çıkış)
+                B->>R: findClosedNights(birimId, giriş, çıkış)
+                R-->>B: çakışan rezervasyonlar ve kapalı geceler
+                alt çakışma var veya gece kapalı (CS-01, CS-04, CS-08)
+                    B->>B: en çok 3 yakın müsait aralık hesapla (FR-36)
+                    B-->>S: ConflictException(alternatifler)
+                    S->>R: rollback()
+                    S-->>C: ConflictException(alternatifler)
+                    C-->>T: 409 "Tarihler müsait değil" + alternatif aralıklar (kayıt yok)
+                else birim müsait
+                    B-->>S: uygun
+                    S->>R: createWithNights(rezervasyon, kalemler, geceler)
+                    alt UNIQUE(birim, gece) ihlali veya yazma hatası (CS-01 yarışı, CS-12)
+                        R-->>S: PersistenceException
+                        S->>R: rollback()
+                        S-->>C: ConflictException veya SystemException
+                        C-->>T: hata mesajı (yarım rezervasyon veya yarım gece kaydı kalmaz)
+                    else kayıt başarılı
+                        R-->>S: Reservation (Beklemede, expires_at)
+                        S->>R: commit()
+                        S-->>C: Reservation
+                        C-->>T: 302 /rezervasyon/RZ-... "Beklemede" (anında 10 dk, onaylı 24 saat)
+                    end
+                end
+            end
+        end
+    end
+```
+ 
+### Diyagramdaki durumlar
+ 
+| Dal | Senaryo | Sonuç |
+| --- | --- | --- |
+| Başarılı | Birim müsait, kayıt ve geceler tek işlemde yazıldı | Rezervasyon Beklemede olur, geceler tutulur |
+| Hata 1 | Çift gönderim (CS-06) | Yeni kayıt oluşmaz, mevcut rezervasyon gösterilir |
+| Hata 2 | Geçersiz tarih, kapasite aşımı, pasif ilan | ValidationException, kayıt yok |
+| Hata 3 | Kilit alınamadı | 2 deneme sonrası "yoğunluk" mesajı, kayıt yok |
+| Hata 4 | Çakışma veya kapalı gece (CS-01, 04, 08) | ConflictException, en çok 3 alternatif önerilir |
+| Hata 5 | UNIQUE(birim, gece) ihlali veya yazma hatası (CS-12) | Rollback, yarım kayıt kalmaz |
