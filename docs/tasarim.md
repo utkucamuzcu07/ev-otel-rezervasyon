@@ -467,3 +467,198 @@ sequenceDiagram
 
 6 risk tablosu
 [risk-listesi.xlsx](https://github.com/user-attachments/files/33447133/risk-listesi.xlsx)
+6. Arayüz
+6.1 Sayfa haritası
+ '''mermaid
+ flowchart LR
+subgraph HER["Herkes (ziyaretçi dahil)"]
+  A["Ana sayfa ve arama"] --> B["Arama sonuçları"]
+  B --> C["İlan detayı ve aylık takvim"]
+  G["Giriş"]
+  K["Kayıt ol"]
+  PW["Parola sıfırlama"]
+end
+subgraph MUS["Kayıtlı müşteri"]
+  D["Rezervasyon onayı ve gecelik fiyat dökümü"] --> E["Rezervasyonlarım"]
+  E --> F["İptal önizleme ve iade"]
+  E --> Y["Yorum yaz"]
+  H["Favoriler"]
+  I["Profil"]
+  BL["Bildirimler"]
+  SK["Şikâyet oluştur"]
+end
+subgraph ILN["İlan sahibi (yalnızca ilan sahibi)"]
+  J["İlan sahibi paneli"] --> L1["İlanlarım ve odalar"]
+  L1 --> RS["Resim yükleme"]
+  J --> TK["Takvim ve fiyat kuralları"]
+  J --> GR["Gelen rezervasyonlar: onayla / reddet"]
+  J --> RP["Doluluk ve gelir raporu"]
+end
+subgraph YON["Yönetici (yalnızca yönetici)"]
+  O["Yönetici paneli"] --> KU["Kullanıcılar"]
+  O --> IL["İlanlar: inceleme ve kaldırma"]
+  O --> SC["Şikâyetler"]
+  O --> YD["Yorum denetimi"]
+  O --> YR["Raporlar"]
+end
+G --> A
+K --> G
+G -.-> PW
+C -->|"giriş gerekir"| D
+A --> H
+A --> I
+A --> BL
+C -.-> SK
+G -->|"ilan sahibi rolü"| J
+G -->|"yönetici rolü"| O
+classDef her fill:#eef2f7,stroke:#5b6b82,color:#1b2430
+classDef mus fill:#e3f1e8,stroke:#3d8b5a,color:#12301f
+classDef iln fill:#fdf0d9,stroke:#b9852a,color:#3a2a08
+classDef yon fill:#f9e1e1,stroke:#b04a4a,color:#3a1010
+class A,B,C,G,K,PW her
+class D,E,F,Y,H,I,BL,SK mus
+class J,L1,RS,TK,GR,RP iln
+class O,KU,IL,SC,YD,YR yon
+style HER fill:#f7f9fc,stroke:#c3ccd8,color:#1b2430
+style MUS fill:#f4faf6,stroke:#b9dcc6,color:#12301f
+style ILN fill:#fffaf0,stroke:#ecd5a6,color:#3a2a08
+style YON fill:#fdf6f6,stroke:#e6c0c0,color:#3a1010
+'''
+
+Renkler rolü gösterir: gri = herkes, yeşil = kayıtlı müşteri, turuncu = yalnızca ilan sahibi, kırmızı = yalnızca yönetici. Yetki sunucu tarafında da denetlenir (NFR-03).
+
+Yönetici (yalnızca yönetici)
+İlan sahibi (yalnızca ilan sahibi)
+Kayıtlı müşteri
+Herkes (ziyaretçi dahil)
+giriş gerekir
+ilan sahibi rolü
+yönetici rolü
+Ana sayfa ve arama
+Arama sonuçları
+İlan detayı ve aylık takvim
+Giriş
+Kayıt ol
+Parola sıfırlama
+Rezervasyon onayı vegecelik fiyat dökümü
+Rezervasyonlarım
+İptal önizleme ve iade
+Yorum yaz
+Favoriler
+Profil
+Bildirimler
+Şikâyet oluştur
+İlan sahibi paneli
+İlanlarım ve odalar
+Resim yükleme
+Takvim ve fiyat kuralları
+Gelen rezervasyonlar:onayla / reddet
+Doluluk ve gelir raporu
+Yönetici paneli
+Kullanıcılar
+İlanlar: inceleme ve kaldırma
+Şikâyetler
+Yorum denetimi
+Raporlar
+6.2 Ekran taslakları
+
+Aşağıdaki taslaklar metin tabanlıdır; docs/wireframes/ klasörüne draw.io veya excalidraw ile PNG olarak da çizilmesi önerilir (Onur).
+
+Ekran 1 — Arama ve sonuçlar (FR-06, 07, 08)
+
+text
++----------------------------------------------------------------+
+| Otel / Kiralık Ev                          [Giriş]  [Kayıt ol] |
++----------------------------------------------------------------+
+| Konum [__________]  Giriş [__/__/____]  Çıkış [__/__/____]     |
+| Kişi [ 2 v ]  Tür [ Hepsi v ]  Oda tipi [ Hepsi v ]  [ ARA ]   |
+| (hata mesajı: "Çıkış tarihi girişten sonra olmalı")            |
++----------------------------------------------------------------+
+| Filtre: Fiyat [___]-[___]  Puan [ v ]  Olanaklar [x] Wi-Fi ... |
+| Sırala: [ Fiyat v ]                                            |
++----------------------------------------------------------------+
+| [foto]  Otel Karadeniz        4,5 ★   3 müsait oda             |
+|         Trabzon                3 gece toplam: 4.862,00 TL      |
+|                                                    [ Detay ]   |
++----------------------------------------------------------------+
+
+Ekran 2 — İlan detayı ve aylık müsaitlik takvimi (FR-09, 10)
+
+text
++----------------------------------------------------------------+
+| Otel Karadeniz — Trabzon                          4,5 ★        |
+| [foto1] [foto2] [foto3]                                        |
+| Açıklama ... Olanaklar: Wi-Fi, Kahvaltı ...                     |
+| İptal politikası: ORTA (5+ gün %100, 1–4 gün %50)              |
++----------------------------------------------------------------+
+| Oda [ Deluxe 204 v ]      < Temmuz 2027 >                      |
+|  Pt Sa Ça Pe Cu Ct Pa                                          |
+|   .  .  .  1  2  3  4     . müsait  X dolu  - kapalı           |
+|   5  6  X  X  X  -  -                                          |
+| Giriş [__] Çıkış [__] Kişi [ 2 v ]        [ Fiyatı göster ]    |
++----------------------------------------------------------------+
+
+Ekran 3 — Rezervasyon onayı, gecelik fiyat dökümü (çekirdek ekran) (FR-11, 14, 36)
+
+text
++----------------------------------------------------------------+
+| Rezervasyonu onayla                                            |
+| Otel Karadeniz / Deluxe 204   9–12 Temmuz 2027 (3 gece, 2 kişi)|
++----------------------------------------------------------------+
+| Gece          Açıklama                          Tutar          |
+| 9 Tem (Cum)   1000 +%30 sezon +%20 hafta sonu   1.560,00 TL    |
+| 10 Tem (Cmt)  1000 +%30 sezon +%20 hafta sonu   1.560,00 TL    |
+| 11 Tem (Paz)  1000 +%30 sezon                   1.300,00 TL    |
+| Konaklama toplamı                               4.420,00 TL    |
+| Uzun konaklama indirimi                              0,00 TL   |
+| Vergi (%10)                                        442,00 TL   |
+| TOPLAM                                          4.862,00 TL    |
++----------------------------------------------------------------+
+| İptal koşulu: ORTA — girişe 5+ gün kala %100 iade              |
+| Bekletme süresi: 09:58 (anında rezervasyonda)                  |
+| [ Onayla ve öde (simüle) ]   [ Vazgeç ]                        |
++----------------------------------------------------------------+
+| HATA (çakışmada): "Seçtiğiniz tarihler artık müsait değil."    |
+|   Alternatifler: [12–15 Tem]  [14–17 Tem]  [16–19 Tem]         |
++----------------------------------------------------------------+
+
+Ekran 4 — Rezervasyonlarım ve iptal önizleme (FR-16, 17, 45)
+
+text
++----------------------------------------------------------------+
+| Rezervasyonlarım          [ Gelecek ] [ Geçmiş ]               |
+| No             Tarih            Durum       Tutar     İşlem    |
+| RZ-20261014-A7 9–12 Tem 2027    Onaylandı   4.862,00  [İptal]  |
++----------------------------------------------------------------+
+| İptal önizleme                                                 |
+| Kalan gün: 3   Politika: ORTA   İade oranı: %50                |
+| İade: 2.431,00 TL   Kesinti: 2.431,00 TL                       |
+| [ İptali onayla ]   [ Vazgeç ]                                 |
++----------------------------------------------------------------+
+
+Ekran 5 — İlan sahibi: takvim ve fiyat kuralları (FR-22, 43)
+
+text
++----------------------------------------------------------------+
+| İlan sahibi paneli > Otel Karadeniz > Fiyat ve takvim          |
+| Temel fiyat (Deluxe 204): [ 1000,00 ] TL                       |
+| Fiyat kuralları                                [ + Kural ekle ]|
+|  Tür             Parametre                 Değer      Sil      |
+|  Sezon           1 Tem – 31 Ağu            +%30       [x]      |
+|  Hafta sonu      Cuma, Cumartesi geceleri  +%20       [x]      |
+|  Uzun konaklama  7+ gece                   -%10       [x]      |
+| Takvim: gece seç -> [ Kapat ]  [ Aç ]  [ Özel fiyat: ____ ]    |
+| (Rezervasyonlu geceler kilitli; kapatma denemesi hata verir)   |
++----------------------------------------------------------------+
+
+Ekran 6 — Doluluk ve gelir raporu (FR-30)
+
+text
++----------------------------------------------------------------+
+| Rapor   Tarih [01.07.2027] – [31.07.2027]  Kırılım [ Oda tipi v]|
+| Doluluk oranı: %72   Net gelir: 184.250,00 TL   Rezervasyon: 41 |
+| Oda tipi    Doluluk   Net gelir                                 |
+| Deluxe      %80       96.000,00 TL                              |
+| Standart    %65       88.250,00 TL                              |
+| Durum dağılımı: Onaylandı 30 · İptal 8 · Tamamlandı 3           |
++-----------------------------------------------------------
