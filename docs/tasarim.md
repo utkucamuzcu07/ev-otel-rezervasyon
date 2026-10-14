@@ -672,3 +672,12 @@ text
 | Standart    %65       88.250,00 TL                              |
 | Durum dağılımı: Onaylandı 30 · İptal 8 · Tamamlandı 3           |
 +-----------------------------------------------------------
+
+8.Yapay Zekâ Günlüğü
+
+| Tarih | Kişi | Araç | Ne için kullanıldı | Sonuç |
+|---|---|---|---|---|
+| 14.10.2026 | Kaan Şahin | Claude | Bölüm 6.1 sayfa haritası (Mermaid kodu ve resim), risk tablosu, katmanlı mimarinin projeye uyarlanması | Çıktılar incelenip alındı, katmanlı mimari projeye göre düzenlendi. |
+| 14.10.2026 | Onur Akbalık | Claude | Arayüz (wireframe) resimleri | Resimler oluşturuldu, tasarim.md'ye eklendi. |
+| 14.10.2026 | Utku Camuzcu | Claude, DeepSeek | Composer otomatik yükleme (autoload) kurulumu | Kurulum yapıldı. |
+| 14.10.2026 | İrem Ablak | Claude, DeepSeek | Diyagramların Mermaid kodları | Kodlar yazdırıldı, diyagramlar tasarim.md'ye eklendi. |
