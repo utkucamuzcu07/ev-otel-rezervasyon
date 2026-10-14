@@ -465,12 +465,20 @@ sequenceDiagram
 
 4. Neden: Yeni bir fiyat kuralı (örneğin "bayram dönemi zammı" veya "erken rezervasyon indirimi") eklemek için mevcut PricingService veya diğer strateji sınıflarına dokunmadan yalnızca yeni bir sınıf (HolidayPricingStrategy) yazıp arayüzü uygulamak yeterlidir. Bu, Açık/Kapalı Prensibi'ne (OCP) uygundur; ayrıca her strateji bağımsız olarak birim testine tabi tutulabildiği için SRS'teki AC-08 (toplam fiyatın onay öncesi açık gösterimi) ve kılavuzdaki "en az 10 PHPUnit testi" şartı daha güvenilir biçimde karşılanır. Sunumda "Hangi sınıflar bu deseni oluşturuyor?" sorusuna PricingStrategyInterface ile üç somut strateji sınıfı diyagr
 
+
+
+
 6 risk tablosu
 [risk-listesi.xlsx](https://github.com/user-attachments/files/33447133/risk-listesi.xlsx)
 
 
-6. Arayüz
-6.1 Sayfa haritası
+
+
+
+
+ 
+7. Arayüz
+7.1 Sayfa haritası
 ```mermaid
  flowchart LR
 subgraph HER["Herkes (ziyaretçi dahil)"]
@@ -562,7 +570,7 @@ Kullanıcılar
 Şikâyetler
 Yorum denetimi
 Raporlar
-6.2 Ekran taslakları
+7.2 Ekran taslakları
 
 Aşağıdaki taslaklar metin tabanlıdır; docs/wireframes/ klasörüne draw.io veya excalidraw ile PNG olarak da çizilmesi önerilir 
 
