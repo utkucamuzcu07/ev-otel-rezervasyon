@@ -178,6 +178,7 @@ classDiagram
 - **Strategy:** `PricingService`, fiyat kurallarını `PricingStrategyInterface` üzerinden çalıştırır. Yeni kural eklemek yeni bir sınıf eklemektir.
 - **Repository:** Servisler yalnızca `...RepositoryInterface` bilir. JSON (Aşama 2) ve PDO (Aşama 3) uygulamaları aynı arayüzü uygular.
 - **Çekirdek problem:** `AvailabilityService::isAvailable`, `findOverlapping` ile çakışmaları arar. Aynı gün çıkış-giriş çakışma sayılmaz.
+<<<<<<< HEAD
 3. Sıralama Diyagramı – "Rezervasyon Oluştur" (çekirdek akış, hata dallarıyla)
   3. Sıralama Diyagramı – "Rezervasyon Oluştur" (çekirdek akış, hata dallarıyla)
 
@@ -191,3 +192,5 @@ Controller yalnızca Service'i çağırır; SQL yok, hesap yok. Fiyat hesabı Pr
 Diyagramda SQL yoktur; yalnızca metot çağrıları gösterilmiştir (kılavuzdaki "sık hata" uyarısı).
 Ödeme simülasyonu ilk sürümde kapsam dışıdır (SRS 10.3); kayıt Beklemede durumunda oluşur, ilan sahibi onay/ret verir (FR-23).
 >>>>>>> ad7e84d462d336a21c1ffbbbbd25b15383095308
+=======
+>>>>>>> adbb5230d0e18fb901fe715d481f1c5e70130dd8
