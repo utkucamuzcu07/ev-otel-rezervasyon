@@ -564,7 +564,6 @@ Yorum denetimi
 Raporlar
 6.2 Ekran taslakları
 
-Aşağıdaki taslaklar metin tabanlıdır; docs/wireframes/ klasörüne draw.io veya excalidraw ile PNG olarak da çizilmesi önerilir (Onur).
 
 Ekran 1 — Arama ve sonuçlar (FR-06, 07, 08)
 
