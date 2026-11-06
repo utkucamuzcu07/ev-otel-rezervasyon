@@ -621,6 +621,115 @@ Kullanıcılar
 Yorum denetimi
 Raporlar
 7.2 Ekran taslakları
+ 
+
+Ekran 1 — Arama ve sonuçlar (FR-06, 07, 08)
+
+text
++----------------------------------------------------------------+
+| Otel / Kiralık Ev                          [Giriş]  [Kayıt ol] |
++----------------------------------------------------------------+
+| Konum [__________]  Giriş [__/__/____]  Çıkış [__/__/____]     |
+| Kişi [ 2 v ]  Tür [ Hepsi v ]  Oda tipi [ Hepsi v ]  [ ARA ]   |
+| (hata mesajı: "Çıkış tarihi girişten sonra olmalı")            |
++----------------------------------------------------------------+
+| Filtre: Fiyat [___]-[___]  Puan [ v ]  Olanaklar [x] Wi-Fi ... |
+| Sırala: [ Fiyat v ]                                            |
++----------------------------------------------------------------+
+| [foto]  Otel Karadeniz        4,5 ★   3 müsait oda             |
+|         Trabzon                3 gece toplam: 4.862,00 TL      |
+|                                                    [ Detay ]   |
++----------------------------------------------------------------+
+
+Ekran 2 — İlan detayı ve aylık müsaitlik takvimi (FR-09, 10)
+
+text
++----------------------------------------------------------------+
+| Otel Karadeniz — Trabzon                          4,5 ★        |
+| [foto1] [foto2] [foto3]                                        |
+| Açıklama ... Olanaklar: Wi-Fi, Kahvaltı ...                     |
+| İptal politikası: ORTA (5+ gün %100, 1–4 gün %50)              |
++----------------------------------------------------------------+
+| Oda [ Deluxe 204 v ]      < Temmuz 2027 >                      |
+|  Pt Sa Ça Pe Cu Ct Pa                                          |
+|   .  .  .  1  2  3  4     . müsait  X dolu  - kapalı           |
+|   5  6  X  X  X  -  -                                          |
+| Giriş [__] Çıkış [__] Kişi [ 2 v ]        [ Fiyatı göster ]    |
++----------------------------------------------------------------+
+
+Ekran 3 — Rezervasyon onayı, gecelik fiyat dökümü (çekirdek ekran) (FR-11, 14, 36)
+
+text
++----------------------------------------------------------------+
+| Rezervasyonu onayla                                            |
+| Otel Karadeniz / Deluxe 204   9–12 Temmuz 2027 (3 gece, 2 kişi)|
++----------------------------------------------------------------+
+| Gece          Açıklama                          Tutar          |
+| 9 Tem (Cum)   1000 +%30 sezon +%20 hafta sonu   1.560,00 TL    |
+| 10 Tem (Cmt)  1000 +%30 sezon +%20 hafta sonu   1.560,00 TL    |
+| 11 Tem (Paz)  1000 +%30 sezon                   1.300,00 TL    |
+| Konaklama toplamı                               4.420,00 TL    |
+| Uzun konaklama indirimi                              0,00 TL   |
+| Vergi (%10)                                        442,00 TL   |
+| TOPLAM                                          4.862,00 TL    |
++----------------------------------------------------------------+
+| İptal koşulu: ORTA — girişe 5+ gün kala %100 iade              |
+| Bekletme süresi: 09:58 (anında rezervasyonda)                  |
+| [ Onayla ve öde (simüle) ]   [ Vazgeç ]                        |
++----------------------------------------------------------------+
+| HATA (çakışmada): "Seçtiğiniz tarihler artık müsait değil."    |
+|   Alternatifler: [12–15 Tem]  [14–17 Tem]  [16–19 Tem]         |
++----------------------------------------------------------------+
+
+Ekran 4 — Rezervasyonlarım ve iptal önizleme (FR-16, 17, 45)
+
+text
++----------------------------------------------------------------+
+| Rezervasyonlarım          [ Gelecek ] [ Geçmiş ]               |
+| No             Tarih            Durum       Tutar     İşlem    |
+| RZ-20261014-A7 9–12 Tem 2027    Onaylandı   4.862,00  [İptal]  |
++----------------------------------------------------------------+
+| İptal önizleme                                                 |
+| Kalan gün: 3   Politika: ORTA   İade oranı: %50                |
+| İade: 2.431,00 TL   Kesinti: 2.431,00 TL                       |
+| [ İptali onayla ]   [ Vazgeç ]                                 |
++----------------------------------------------------------------+
+
+Ekran 5 — İlan sahibi: takvim ve fiyat kuralları (FR-22, 43)
+
+text
++----------------------------------------------------------------+
+| İlan sahibi paneli > Otel Karadeniz > Fiyat ve takvim          |
+| Temel fiyat (Deluxe 204): [ 1000,00 ] TL                       |
+| Fiyat kuralları                                [ + Kural ekle ]|
+|  Tür             Parametre                 Değer      Sil      |
+|  Sezon           1 Tem – 31 Ağu            +%30       [x]      |
+|  Hafta sonu      Cuma, Cumartesi geceleri  +%20       [x]      |
+|  Uzun konaklama  7+ gece                   -%10       [x]      |
+| Takvim: gece seç -> [ Kapat ]  [ Aç ]  [ Özel fiyat: ____ ]    |
+| (Rezervasyonlu geceler kilitli; kapatma denemesi hata verir)   |
++----------------------------------------------------------------+
+
+Ekran 6 — Doluluk ve gelir raporu (FR-30)
+
+text
++----------------------------------------------------------------+
+| Rapor   Tarih [01.07.2027] – [31.07.2027]  Kırılım [ Oda tipi v]|
+| Doluluk oranı: %72   Net gelir: 184.250,00 TL   Rezervasyon: 41 |
+| Oda tipi    Doluluk   Net gelir                                 |
+| Deluxe      %80       96.000,00 TL                              |
+| Standart    %65       88.250,00 TL                              |
+| Durum dağılımı: Onaylandı 30 · İptal 8 · Tamamlandı 3           |
++-----------------------------------------------------------
+
+8.Yapay Zekâ Günlüğü
+
+| Tarih | Kişi | Araç | Ne için kullanıldı | Sonuç |
+|---|---|---|---|---|
+| 14.10.2026 | Kaan Şahin | Claude | Bölüm 6.1 sayfa haritası (Mermaid kodu ve resim), risk tablosu, katmanlı mimarinin projeye uyarlanması | Çıktılar incelenip alındı, katmanlı mimari projeye göre düzenlendi. |
+| 14.10.2026 | Onur Akbalık | Claude | Arayüz (wireframe) resimleri | Resimler oluşturuldu, tasarim.md'ye eklendi. |
+| 14.10.2026 | Utku Camuzcu | Claude, DeepSeek | Composer otomatik yükleme (autoload) kurulumu | Kurulum yapıldı. |
+| 14.10.2026 | İrem Ablak | Claude, DeepSeek | Diyagramların Mermaid kodları | Kodlar yazdırıldı, diyagramlar tasarim.md'ye eklendi. |
 
 ## 9  izlenebilirlik matrisi
 
